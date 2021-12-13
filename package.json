@@ -1,0 +1,56 @@
+{
+  "name": "3DMV",
+  "version": "1.0.0",
+  "description": "program template with licence",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "make": "electron-packager . --platform=win32 --arch=x64 3DMV --overwrite true",
+    "build-installer": "electron-builder"
+  },
+  "build": {
+    "asar": false,
+    "appId": "3DMV",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.png"
+    },
+    "nsis": {
+      "shortcutName": "3DMV",
+      "installerIcon": "icon.png",
+      "uninstallerIcon": "icon.png",
+      "uninstallDisplayName": "3DMV",
+      "license": "LICENSE.txt",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Alexie",
+  "license": "MIT",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "electron": "^13.6.2",
+    "electron-builder": "^22.9.1",
+    "electron-packager": "^15.3.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  },
+  "dependencies": {
+    "child-process": "^1.0.2",
+    "custom-electron-titlebar": "^3.2.7",
+    "electron-reload": "^2.0.0-alpha.1",
+    "mysql": "^2.18.1",
+    "node-machine-id": "^1.1.12",
+    "os": "^0.1.2"
+  }
+}

@@ -1,0 +1,45 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>3DMV</title>
+</head>
+<body>
+  <canvas width="900" height="600" id="canvas"></canvas>
+  <h2 style="display:  block !important; margin: 0 auto !important;">Draw each line in turn</h2>
+  <div class="controls">
+    <ul  style="display: none !important;">
+      <li class="red selected"></li>
+      <li class="blue"></li>
+      <li class="yellow"></li>
+    </ul>
+    <button id="calculate" onclick="calculate()">Calculate</button>
+    <button id="clear" onclick="clearCanvas()">Clear</button>
+    <button id="predict" onclick="predict()">Predict</button>
+    <button id="get_img" onclick="getImage()">Get Image</button>
+    <div id="colorSelect">
+      <span id="newColor"></span>
+      <div class="sliders">
+        <p>
+          <label for="red">Red</label>
+          <input id="red" name="red" type="range" min=0 max=255 value=0>
+        </p>
+        <p>
+          <label for="green">Green</label>
+          <input id="green" name="green" type="range" min=0 max=255 value=0>
+        </p>
+        <p>
+          <label for="blue">Blue</label>
+          <input id="blue" name="blue" type="range" min=0 max=255 value=0>
+        </p>
+      </div>
+      <div>
+        <button id="addNewColor">Add Color</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/vendor.min.js"></script>
+  <script src="js/functions.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -13,11 +13,21 @@ let side;
 let doubleSide;
 let mouseDown = false;
 let arr = [];
+let lines = [];
 var pathLength = 0;
 const mouse = {x: 0,  y: 0};
 const last_mouse = {x: 0,  y: 0};
 let curr_pos;
+let isFirst = true;
 let firstTimeV = true, firstTimeH = true, secondTimeV = true, secondTimeH = true;
+let dict = {
+  "cube": {
+    "l": 5
+  },
+  "square": {
+    "l": 4
+  }
+};
 //When clicking on control list items
 $(".controls").on("click", "li", function() {
   //Deselect sibling elements
@@ -84,7 +94,7 @@ $canvas.mousedown(function(e) {
     } else if(mouse.x < 0){
         mouse.x = mouse.x * (-1);
     }
-    console.log("mouse.x * mouse.y --> ", lastEvent.offsetX, " * ", lastEvent.offsetY)
+    // console.log("mouse.x * mouse.y --> ", lastEvent.offsetX, " * ", lastEvent.offsetY)
     context.stroke();
     lastEvent = e;
     pathLength += distanceBetween(last_mouse, mouse);
@@ -112,17 +122,14 @@ $canvas.mousedown(function(e) {
         curr_pos = 'vertical';
       }
       curr_pos = 'horizontal';
-
     }
     arr.push({
-      "position:":curr_pos,
+      "position":curr_pos,
       "length" : pathLength
     });
-    console.log(arr);
   }
 }).mouseup(function() {
   mouseDown = false;
-  console.log("Distance ------ ", pathLength);
   // console.log("First: ", firstEvent.offsetX,firstEvent.offsetY);
   // console.log("Last: ", lastEvent.offsetX, lastEvent.offsetY);
   //get allign position;
@@ -168,12 +175,60 @@ $canvas.mousedown(function(e) {
 });
 
 function calculate() {
-let imageData = context.getImageData(0, 0, $canvas[0].width, $canvas[0].height);
-context.putImageData(imageData, 0, 0);
-let colorIndices = getColorIndicesForCoord(50, 100, 900);
+  let imageData = context.getImageData(0, 0, $canvas[0].width, $canvas[0].height);
+  // context.putImageData(imageData, 0, 0);
+  let n = arr.length;
+  let current_poz;
+  let nextLine;
+  let controlIndex;
+  let firstTimeTouchControlIndex = true;
+  for(let i = 1; i < n; i++){
+    if(i === 1){
+        current_poz = arr[i].position;
+        current_poz = arr[i].position;
+    } else {
+      if(arr[i].position !== current_poz){
+        if(arr[i].position === current_poz){
+          current_poz = current_poz;
+        } else if(arr[i+1].position === current_poz){
+          current_poz = current_poz;
+        } else if(arr[i+2].position === current_poz){
+          current_poz = current_poz;
+        } else if(arr[i+3].position === current_poz){
+          current_poz = current_poz;
+        } else if(arr[i+4].position === current_poz){
+          current_poz = current_poz;
+        } else if(arr[i+5].position === current_poz){
+          current_poz = current_poz;
+        } else {
+          current_poz = arr[i].position;
+          addNewLine(arr[i-1], i)
+        }
+      } else if(arr[i].position === current_poz) {
+        if(firstTimeTouchControlIndex) {
+          console.log(i)
+          controlIndex = i;
+          firstTimeTouchControlIndex = false;
+        }
+        if(i === (n-1)){
+          let lenNLine = parseInt(arr[n-1].length) - parseInt(arr[controlIndex].length);
+          let positionNLine = arr[n-1].position;
+          let arrNLine = {
+            "position": positionNLine,
+            "length": lenNLine
+          };
+          addNewLine(arrNLine, (n-1));
+        }
+        current_poz = current_poz;
+      }
+    }
+  }
+  setTimeout(function(){redrawLinesDB()}, 1000);
 }
 
 function clearCanvas() {
+  arr = [];
+  lines = [];
   return context.clearRect(0, 0, $canvas[0].width, $canvas[0].height);
 }
 
@@ -202,11 +257,31 @@ function distanceBetween(A, B) {
     } else {
       dy = B.y - A.y; 
     }
-    console.log("A: ", A, ", B: ", B);
-    console.log("dx = ", dx, ", dy = ", dy, " ", " calc = ", (dx * dx + dy * dy) * 0.5);
     return (dx * dx + dy * dy) ** 0.5;
 }
 
-function addNewLine() {
+function addNewLine(element, index) {
+  console.log(arr);
+  // arr.splice(0, parseInt(index));
+  let len;
+  if(!isFirst){
+    console.log(lines[lines.length - 1])
+    len = element.length - lines[lines.length - 1].length;
+  } else {
+    len = element.length;
+    isFirst = false;
+  }
+  console.log(len)
+  lines.push({
+    "position": element.position,
+    "length": len
+    });
+}
 
+function redrawLinesDB() {
+  // for(let i=1; i < lines.length; i++){
+  //     lines[i].length = lines[i].length - lines[i-1].length;
+  //     console.log(i);
+  // }
+  console.log(lines)
 }

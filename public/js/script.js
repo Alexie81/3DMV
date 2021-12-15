@@ -1,6 +1,6 @@
 //Problem: No user interacyion causes no change to application
 //Solution: User interaction causes changes appropriately
-
+const path = require('path');
 let color = $(".selected").css("background-color");
 let $canvas = $("canvas");
 let context = $canvas[0].getContext("2d");
@@ -20,14 +20,14 @@ const last_mouse = {x: 0,  y: 0};
 let curr_pos;
 let isFirst = true;
 let firstTimeV = true, firstTimeH = true, secondTimeV = true, secondTimeH = true;
-let dict = {
-  "cube": {
+let text_to_send = "";
+let volume;
+let perimeter;
+let area;
+let cube = {
+    "diff": 100,
     "l": 5
-  },
-  "square": {
-    "l": 4
-  }
-};
+}
 //When clicking on control list items
 $(".controls").on("click", "li", function() {
   //Deselect sibling elements
@@ -150,13 +150,13 @@ $canvas.mousedown(function(e) {
   //then get the height but just one line, and verify multiple combination line;
   if(position_allgn === 'vertical'){
     //30 diff is the max max for people who don't know how to draw :);
-    side = parseInt(lastEvent.offsetY - firstEvent.offsetY);
+    side = lastEvent.offsetY - firstEvent.offsetY;
     if(side < 0){
       side = side * (-1);
     }
     // console.log(position_allgn, side);
   } else if(position_allgn === 'horizontal'){
-    side = parseInt(lastEvent.offsetX - firstEvent.offsetX);
+    side = lastEvent.offsetX - firstEvent.offsetX;
     if(side < 0){
       side = side * (-1);
     }
@@ -190,15 +190,15 @@ function calculate() {
       if(arr[i].position !== current_poz){
         if(arr[i].position === current_poz){
           current_poz = current_poz;
-        } else if(arr[i+1].position === current_poz){
+        } else if(arr[i+1] && arr[i+1].position === current_poz){
           current_poz = current_poz;
-        } else if(arr[i+2].position === current_poz){
+        } else if(arr[i+2] && arr[i+2].position === current_poz){
           current_poz = current_poz;
-        } else if(arr[i+3].position === current_poz){
+        } else if(arr[i+3] && arr[i+3].position === current_poz ){
           current_poz = current_poz;
-        } else if(arr[i+4].position === current_poz){
+        } else if(arr[i+4] && arr[i+4].position === current_poz ){
           current_poz = current_poz;
-        } else if(arr[i+5].position === current_poz){
+        } else if(arr[i+5] && arr[i+5].position === current_poz ){
           current_poz = current_poz;
         } else {
           current_poz = arr[i].position;
@@ -217,24 +217,75 @@ function calculate() {
             "position": positionNLine,
             "length": lenNLine
           };
-          addNewLine(arrNLine, (n-1));
+            addNewLine(arrNLine, (n-1));
         }
         current_poz = current_poz;
       }
     }
   }
   setTimeout(function(){redrawLinesDB()}, 1000);
+  document.getElementById('calculate').disabled = true;
+  let fHL = lines.find(x => x.position === "horizontal");
+  let fVL = lines.find(x => x.position === "vertical");
+  let horizontal_line = fHL;
+  let vertical_line = fVL;
+
+  if(horizontal_line.length - vertical_line.length > 60 || horizontal_line.length - vertical_line.length < -60){
+    text_to_send = "This is not a cube!";
+  } else {
+    // calculate cube
+    let l = 0;
+    for(let i=0; i < lines.length; i++){
+      if(lines[i].length < 30){
+        lines.splice(i, 1);
+      }
+      if(lines[i].length > 40){
+        l = lines[i].length;
+        break;
+      } else {
+        l = lines[0].length;
+        break;
+      }
+    }
+    console.log("l = ", l)
+    if(l!==0 && lines.length >= 4){
+      volume = (Math.pow(l, 3)) * 0.0264583333;
+      perimeter = (12 * l) * 0.0264583333;
+      area = 12 * (Math.pow(l, 2)) * 0.0264583333;
+      console.log("Volume: " + volume, "Perimeter: " + perimeter, "Area: " + area);
+      text_to_send = `Volume: ${volume}cm²\n Perimeter: ${perimeter}cm²\n Area: ${area}cm²`;  
+    }
+  }
+
+  document.getElementById('result').innerText = text_to_send;
 }
 
 function clearCanvas() {
+  text_to_send = "";
+  document.getElementById('result').innerText = text_to_send;
+  document.getElementById('calculate').disabled = false;
   isFirst = true;
   arr = [];
   lines = [];
+  window.location = __dirname + "\\index.html";
   return context.clearRect(0, 0, $canvas[0].width, $canvas[0].height);
 }
 
 function predict(){
-
+  calculate();
+  text_to_send = "";
+  document.getElementById('result').innerText = text_to_send;
+  document.getElementById('calculate').disabled = false;
+  let fHL = lines.find(x => x.position === "horizontal");
+  let fVL = lines.find(x => x.position === "vertical");
+  let horizontal_line = fHL;
+  let vertical_line = fVL;
+  if(horizontal_line.length - vertical_line.length > 60 || horizontal_line.length - vertical_line.length < -60 && lines.length >= 4){
+    text_to_send = "This is not a cube!";
+  } else {
+    text_to_send = "This is a cube!";
+  }
+  document.getElementById('result').innerText = text_to_send;
 }
 
 function getImage() {
@@ -262,16 +313,16 @@ function distanceBetween(A, B) {
 }
 
 function addNewLine(element, index) {
-  console.log(arr);
-  // arr.splice(0, parseInt(index));
   let len;
   if(!isFirst){
     len = element.length - lines[lines.length - 1].length;
   } else {
     len = element.length;
+    //First time controll
     isFirst = false;
   }
   console.log(len)
+  if(len > 20)
   lines.push({
     "position": element.position,
     "length": len

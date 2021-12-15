@@ -227,6 +227,7 @@ function calculate() {
 }
 
 function clearCanvas() {
+  isFirst = true;
   arr = [];
   lines = [];
   return context.clearRect(0, 0, $canvas[0].width, $canvas[0].height);
@@ -265,7 +266,6 @@ function addNewLine(element, index) {
   // arr.splice(0, parseInt(index));
   let len;
   if(!isFirst){
-    console.log(lines[lines.length - 1])
     len = element.length - lines[lines.length - 1].length;
   } else {
     len = element.length;
